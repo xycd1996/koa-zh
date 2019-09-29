@@ -1,7 +1,5 @@
 ## koa2 + TypeScript + MongoDB 构建 Restful API
 
----
-
 ### 安装依赖
 
 yarn 安装
