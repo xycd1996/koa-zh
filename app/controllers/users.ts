@@ -61,10 +61,15 @@ class UsersCtl implements UsersTypes {
       expiresIn: '1d'
     })
     ctx.body = { token }
+    // 成功登陆后续每次请求，ctx.state.user会带入解密后的用户信息 _id, name
   }
 
+  // 认证用户是否为登录用户
   public async checkOwn(ctx: Context, next: Function) {
-    console.log(ctx)
+    if (ctx.params.id !== ctx.state.user._id) {
+      ctx.throw(403, '无权限操作其他用户')
+    }
+    await next()
   }
 }
 
