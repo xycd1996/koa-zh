@@ -1,0 +1,30 @@
+{
+  "name": "koa-zhihu",
+  "version": "1.0.0",
+  "description": "知乎 RestFul Api",
+  "main": "index.js",
+  "author": "kiter",
+  "license": "MIT",
+  "scripts": {
+    "start": "nodemon --watch 'app/**/*' -e ts,tsx --exec ts-node app"
+  },
+  "dependencies": {
+    "koa": "^2.8.1",
+    "koa-body": "^4.1.1",
+    "koa-json-error": "^3.1.2",
+    "koa-jwt": "^3.6.0",
+    "koa-parameter": "^3.0.1",
+    "koa-router": "^7.4.0",
+    "mongoose": "^5.7.1"
+  },
+  "devDependencies": {
+    "@types/jsonwebtoken": "^8.3.4",
+    "@types/koa": "^2.0.50",
+    "@types/koa-json-error": "^3.1.2",
+    "@types/koa-router": "^7.0.42",
+    "@types/mongoose": "^5.5.18",
+    "nodemon": "^1.19.2",
+    "ts-node": "^8.4.1",
+    "typescript": "^3.6.3"
+  }
+}
