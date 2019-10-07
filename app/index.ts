@@ -33,6 +33,7 @@ function formatError(err: Error): Error {
   return err
 }
 
+// 搭建静态资源服务器
 app.use(koaStatic(path.join(__dirname, '/public')))
 app.use(koaParameter(app))
 app.use(

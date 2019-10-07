@@ -28,6 +28,23 @@ router.delete(
   UsersCtl.delete
 )
 
+// 获取关注列表
+router.get('/:id/following', UsersCtl.checkUserExist, UsersCtl.listFollowing)
+
+// 关注某人
+router.put('/following/:id', auth, UsersCtl.checkUserExist, UsersCtl.follow)
+
+// 取消关注某人
+router.delete(
+  '/following/:id',
+  auth,
+  UsersCtl.checkUserExist,
+  UsersCtl.unFollow
+)
+
+router.get('/:id/follower', UsersCtl.checkUserExist, UsersCtl.listFollower)
+
 router.post('/login', UsersCtl.login)
 
+// 因为 index.ts 文件中利用 require 引入，因此采用 module.exports 导出
 module.exports = router

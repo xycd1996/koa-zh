@@ -26,6 +26,11 @@ const UsersSchema = new Schema({
       }
     ],
     select: false
+  },
+  // following为 _id类型，关联 User 模型数据
+  following: {
+    type: [{ type: Schema.Types.ObjectId, refs: 'User' }],
+    select: false
   }
 })
 

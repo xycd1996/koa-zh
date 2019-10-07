@@ -11,7 +11,15 @@ class UsersCtl implements UsersTypes {
   }
 
   public async findId(ctx: Context) {
-    const user = await UsersSchema.findById(ctx.params.id)
+    const { filed }: { filed: string } = ctx.query
+    const selected = filed
+      ? filed
+          .split(';')
+          .filter(f => f)
+          .map(item => ' +' + item)
+          .join('')
+      : ''
+    const user = await UsersSchema.findById(ctx.params.id).select(selected)
     ctx.body = user
   }
 
@@ -28,8 +36,15 @@ class UsersCtl implements UsersTypes {
 
   public async update(ctx: Context) {
     ctx.verifyParams({
-      name: { type: 'string', required: true },
-      password: { type: 'string', required: true }
+      name: { type: 'string', required: false },
+      password: { type: 'string', required: false },
+      avatar_url: { type: 'string', required: false },
+      business: { type: 'string', required: false },
+      gender: { type: 'enum', values: ['man', 'woman'], required: false },
+      headline: { type: 'string', required: false },
+      locations: { type: 'array', itemType: 'string', required: false },
+      employments: { type: 'array', itemType: 'object', required: false },
+      educations: { type: 'array', itemType: 'object', required: false }
     })
     const user = await UsersSchema.findByIdAndUpdate(
       { _id: ctx.params.id },
@@ -70,6 +85,50 @@ class UsersCtl implements UsersTypes {
       ctx.throw(403, '无权限操作其他用户')
     }
     await next()
+  }
+
+  // 查看用户关注列表
+  public async listFollowing(ctx: Context) {
+    const user: any = await UsersSchema.findById(ctx.params.id)
+      .select('+following')
+      .populate('following')
+    const following = user.following
+    ctx.body = following
+  }
+
+  // 关注某人
+  public async follow(ctx: Context) {
+    const me: any = await UsersSchema.findById(ctx.state.user._id).select(
+      '+following'
+    )
+    if (me.following.includes(ctx.params.id)) {
+      ctx.throw(403, '该用户已关注')
+    }
+    me.following.push(ctx.params.id)
+    me.save()
+    ctx.status = 204
+  }
+
+  // 取消关注
+  public async unFollow(ctx: Context) {
+    const me = await UsersSchema.findById(ctx.state.user._id).select(
+      '+following'
+    )
+    const followList: string[] = (me as any).following
+    // following子集需要用toString()进行序列化，否则类型为object无法对上
+    const index: number = followList
+      .map(f => f.toString())
+      .indexOf(ctx.params.id)
+    if (index > -1) {
+      followList.splice(index, 1)
+      me!.save()
+    }
+    ctx.status = 204
+  }
+
+  public async listFollower(ctx: Context) {
+    const follower = await UsersSchema.find({ following: ctx.params.id })
+    ctx.body = follower
   }
 }
 
