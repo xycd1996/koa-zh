@@ -14,4 +14,10 @@ router.post('/', auth, TopicCtl.create)
 
 router.patch('/:id', auth, TopicCtl.update)
 
+router.get(
+  '/:id/follower',
+  TopicCtl.checkTopicsExist,
+  TopicCtl.listTopicFollower
+)
+
 module.exports = router

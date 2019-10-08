@@ -2,13 +2,14 @@ import { secret } from '../config'
 import jwt from 'koa-jwt'
 import Router from 'koa-router'
 import UsersCtl from '../controllers/users'
+import TopicCtl from '../controllers/topics'
 const router = new Router({ prefix: '/users' })
 
 const auth = jwt({ secret })
 
 router.get('/', UsersCtl.find)
 
-router.get('/:id', UsersCtl.checkUserExist, UsersCtl.findId)
+router.get('/:id', UsersCtl.checkUserExist, UsersCtl.findById)
 
 router.post('/', UsersCtl.create)
 
@@ -45,6 +46,27 @@ router.delete(
 router.get('/:id/follower', UsersCtl.checkUserExist, UsersCtl.listFollower)
 
 router.post('/login', UsersCtl.login)
+
+// 获取某用户专题关注列表
+router.get(
+  '/:id/followingTopic',
+  UsersCtl.checkUserExist,
+  UsersCtl.listFollowingTopics
+)
+
+router.put(
+  '/followingTopic/:id',
+  auth,
+  TopicCtl.checkTopicsExist,
+  UsersCtl.followTopics
+)
+
+router.delete(
+  '/followingTopic/:id',
+  auth,
+  TopicCtl.checkTopicsExist,
+  UsersCtl.unFollowTopics
+)
 
 // 因为 index.ts 文件中利用 require 引入，因此采用 module.exports 导出
 module.exports = router

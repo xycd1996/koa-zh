@@ -6,20 +6,39 @@ import { secret } from '../config'
 
 class UsersCtl implements UsersTypes {
   public async find(ctx: Context) {
-    const user = await UsersSchema.find()
+    const { per_page = 10 } = ctx.query
+    const perPage = Math.max(per_page * 1, 1)
+    const page = Math.max(ctx.query.page * 1, 1)
+    const user = await UsersSchema.find({ name: new RegExp(ctx.query.q) })
+      .limit(perPage)
+      .skip((page - 1) * perPage)
     ctx.body = user
   }
 
-  public async findId(ctx: Context) {
-    const { filed }: { filed: string } = ctx.query
-    const selected = filed
-      ? filed
-          .split(';')
-          .filter(f => f)
-          .map(item => ' +' + item)
-          .join('')
-      : ''
-    const user = await UsersSchema.findById(ctx.params.id).select(selected)
+  public async findById(ctx: Context) {
+    const { fields = '' }: { fields: string } = ctx.query
+    const selected = fields
+      .split(';')
+      .filter(f => f)
+      .map(item => ' +' + item)
+      .join('')
+    const populated = fields
+      .split(';')
+      .filter(f => f)
+      .map(f => {
+        if (f === 'employments') {
+          return 'employments.company employments.job'
+        }
+        if (f === 'educations') {
+          return 'educations.school educations.major'
+        }
+        return f
+      })
+      .join(' ')
+    console.log(populated)
+    const user = await UsersSchema.findById(ctx.params.id)
+      .select(selected)
+      .populate(populated)
     ctx.body = user
   }
 
@@ -129,6 +148,43 @@ class UsersCtl implements UsersTypes {
   public async listFollower(ctx: Context) {
     const follower = await UsersSchema.find({ following: ctx.params.id })
     ctx.body = follower
+  }
+
+  // 用户关注话题列表
+  public async listFollowingTopics(ctx: Context) {
+    const user: any = await UsersSchema.findById(ctx.params.id)
+      .select('+followingTopics')
+      .populate('followingTopics')
+    const topics = user.followingTopics
+    ctx.body = topics
+  }
+
+  public async followTopics(ctx: Context) {
+    const me: any = await UsersSchema.findById(ctx.state.user._id).select(
+      '+followingTopics'
+    )
+    if (me.followingTopics.includes(ctx.params.id)) {
+      ctx.throw(403, '该专题已关注')
+    }
+    me.followingTopics.push(ctx.params.id)
+    me.save()
+    ctx.status = 204
+  }
+
+  public async unFollowTopics(ctx: Context) {
+    const me = await UsersSchema.findById(ctx.state.user._id).select(
+      '+followingTopics'
+    )
+    const followTopicsList: string[] = (me as any).followingTopics
+    // following子集需要用toString()进行序列化，否则类型为object无法对上
+    const index: number = followTopicsList
+      .map(f => f.toString())
+      .indexOf(ctx.params.id)
+    if (index > -1) {
+      followTopicsList.splice(index, 1)
+      me!.save()
+    }
+    ctx.status = 204
   }
 }
 

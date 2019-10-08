@@ -3,7 +3,7 @@ import mongoose from 'mongoose'
 const { model, Schema } = mongoose
 
 const TopicSchema = new Schema({
-  _v: { type: String, select: false },
+  __v: { type: Number, select: false },
   name: { type: String, required: true },
   avatar_url: { type: String },
   introduction: { type: String, select: false }

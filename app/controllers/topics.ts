@@ -1,29 +1,33 @@
 import { Context } from 'koa'
 import TopicSchema from '../models/topic'
+import UsersSchema from '../models/users'
 import TopicTypes from 'topic'
 
 class TopicCtl implements TopicTypes {
-  async find(ctx: Context) {
+  public async find(ctx: Context) {
+    const { per_page = 10 } = ctx.query
+    const perPage = Math.max(per_page * 1, 1)
+    const page = Math.max(ctx.query.page * 1, 1)
     const topic = await TopicSchema.find()
+      .limit(perPage)
+      .skip((page - 1) * perPage)
     ctx.body = topic
   }
 
-  async findById(ctx: Context) {
-    const { filed }: { filed: string } = ctx.query
-    const TopicSelected = filed
-      ? filed
-          .split(';')
-          .filter(f => f)
-          .map(f => ' +' + f)
-          .join(';')
-      : ''
+  public async findById(ctx: Context) {
+    const { fields = '' }: { fields: string } = ctx.query
+    const TopicSelected = fields
+      .split(';')
+      .filter(f => f)
+      .map(f => ' +' + f)
+      .join(';')
     const topic = await TopicSchema.findById(ctx.params.id).select(
       TopicSelected
     )
     ctx.body = topic
   }
 
-  async create(ctx: Context) {
+  public async create(ctx: Context) {
     ctx.verifyParams({
       name: { type: 'string', required: true },
       avatar_url: { type: 'string', required: false },
@@ -34,7 +38,7 @@ class TopicCtl implements TopicTypes {
     ctx.body = newTopic
   }
 
-  async update(ctx: Context) {
+  public async update(ctx: Context) {
     ctx.verifyParams({
       name: { type: 'string', required: false },
       avatar_url: { type: 'string', required: false },
@@ -45,6 +49,20 @@ class TopicCtl implements TopicTypes {
       ctx.request.body
     )
     ctx.body = newTopic
+  }
+
+  public async checkTopicsExist(ctx: Context, next: Function) {
+    const topic = await TopicSchema.findById(ctx.params.id)
+    if (!topic) {
+      ctx.throw(404, '专题不存在')
+    }
+    await next()
+  }
+
+  // 获取话题关注者
+  public async listTopicFollower(ctx: Context) {
+    const user = await UsersSchema.find({ followingTopics: ctx.params.id })
+    ctx.body = user
   }
 }
 
