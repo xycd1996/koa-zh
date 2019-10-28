@@ -1,6 +1,7 @@
 import { Context } from 'koa'
 import UsersTypes from 'users'
 import UsersSchema from '../models/users'
+import Question from '../models/questions'
 import jsonwebtoken from 'jsonwebtoken'
 import { secret } from '../config'
 
@@ -85,12 +86,25 @@ class UsersCtl implements UsersTypes {
     await next()
   }
 
-  public async login(ctx: Context) {
-    const user: any = await UsersSchema.findOne(ctx.request.body)
-    if (!user) {
-      ctx.throw(401, '用户名或密码错误')
+  public async checkUserLogin(ctx: Context, next: Function) {
+    ctx.verifyParams({
+      name: { type: 'string', required: true },
+      password: { type: 'string', required: true }
+    })
+    const name = await UsersSchema.findOne({ name: ctx.request.body.name })
+    const user = await UsersSchema.findOne(ctx.request.body)
+    if (!name) {
+      ctx.throw(404, '用户不存在')
     }
-    const { _id, name } = user
+    if (!user) {
+      ctx.throw(403, '密码错误')
+    }
+    ctx.state.user = user
+    await next()
+  }
+
+  public async login(ctx: Context) {
+    const { _id, name } = ctx.state.user
     const token = jsonwebtoken.sign({ _id, name }, secret, {
       expiresIn: '1d'
     })
@@ -185,6 +199,11 @@ class UsersCtl implements UsersTypes {
       me!.save()
     }
     ctx.status = 204
+  }
+
+  public async listQuestions(ctx: Context) {
+    const questions = await Question.find({ questioner: ctx.params.id })
+    ctx.body = questions
   }
 }
 

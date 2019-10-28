@@ -7,6 +7,7 @@ export default interface UsersTypes {
   update(ctx: Context, next?: Function): void
   delete(ctx: Context, next?: Function): void
   checkUserExist(ctx: Context, next?: Function): void
+  checkUserLogin(ctx: Context, next?: Function): void
   login(ctx: Context, next?: Function): void
   checkOwn(ctx: Context, next?: Function): void
   listFollowing(ctx: Context, next?: Function): void
@@ -16,4 +17,5 @@ export default interface UsersTypes {
   listFollowingTopics(ctx: Context, next?: Function): void
   followTopics(ctx: Context, next?: Function): void
   unFollowTopics(ctx: Context, next?: Function): void
+  listQuestions(ctx: Context, next?: Function): void
 }

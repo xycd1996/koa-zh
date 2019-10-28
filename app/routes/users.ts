@@ -43,30 +43,35 @@ router.delete(
   UsersCtl.unFollow
 )
 
-router.get('/:id/follower', UsersCtl.checkUserExist, UsersCtl.listFollower)
+router.get('/:id/followers', UsersCtl.checkUserExist, UsersCtl.listFollower)
 
-router.post('/login', UsersCtl.login)
+router.post('/login', UsersCtl.checkUserLogin, UsersCtl.login)
 
-// 获取某用户专题关注列表
-router.get(
-  '/:id/followingTopic',
-  UsersCtl.checkUserExist,
-  UsersCtl.listFollowingTopics
-)
-
+// 关注某个专题
 router.put(
-  '/followingTopic/:id',
+  '/followingTopics/:id',
   auth,
   TopicCtl.checkTopicsExist,
   UsersCtl.followTopics
 )
 
+// 取消关注某个专题
 router.delete(
-  '/followingTopic/:id',
+  '/followingTopics/:id',
   auth,
   TopicCtl.checkTopicsExist,
   UsersCtl.unFollowTopics
 )
+
+// 获取某用户专题关注列表
+router.get(
+  '/:id/followingTopics',
+  UsersCtl.checkUserExist,
+  UsersCtl.listFollowingTopics
+)
+
+// 获取用户的问题列表
+router.get('/:id/questions', UsersCtl.checkUserExist, UsersCtl.listQuestions)
 
 // 因为 index.ts 文件中利用 require 引入，因此采用 module.exports 导出
 module.exports = router
