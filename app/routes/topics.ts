@@ -20,4 +20,6 @@ router.get(
   TopicCtl.listTopicFollower
 )
 
+router.get('/:id/questions', TopicCtl.checkTopicsExist, TopicCtl.listQuestions)
+
 module.exports = router

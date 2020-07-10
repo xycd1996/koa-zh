@@ -7,4 +7,5 @@ export default interface TopicTypes {
   update(ctx: Context, next?: Function): void
   checkTopicsExist(ctx: Context, next?: Function): void
   listTopicFollower(ctx: Context, next?: Function): void
+  listQuestions(ctx: Context, next?: Function): void
 }

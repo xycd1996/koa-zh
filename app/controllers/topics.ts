@@ -1,6 +1,7 @@
 import { Context } from 'koa'
-import TopicSchema from '../models/topic'
+import TopicSchema from '../models/topics'
 import UsersSchema from '../models/users'
+import Questions from '../models/questions'
 import TopicTypes from 'topic'
 
 class TopicCtl implements TopicTypes {
@@ -18,12 +19,10 @@ class TopicCtl implements TopicTypes {
     const { fields = '' }: { fields: string } = ctx.query
     const TopicSelected = fields
       .split(';')
-      .filter(f => f)
-      .map(f => ' +' + f)
+      .filter((f) => f)
+      .map((f) => ' +' + f)
       .join(';')
-    const topic = await TopicSchema.findById(ctx.params.id).select(
-      TopicSelected
-    )
+    const topic = await TopicSchema.findById(ctx.params.id).select(TopicSelected)
     ctx.body = topic
   }
 
@@ -31,7 +30,7 @@ class TopicCtl implements TopicTypes {
     ctx.verifyParams({
       name: { type: 'string', required: true },
       avatar_url: { type: 'string', required: false },
-      introduction: { type: 'string', required: false }
+      introduction: { type: 'string', required: false },
     })
     const newTopic = new TopicSchema(ctx.request.body)
     newTopic.save()
@@ -42,12 +41,9 @@ class TopicCtl implements TopicTypes {
     ctx.verifyParams({
       name: { type: 'string', required: false },
       avatar_url: { type: 'string', required: false },
-      introduction: { type: 'string', required: false }
+      introduction: { type: 'string', required: false },
     })
-    const newTopic = await TopicSchema.findByIdAndUpdate(
-      ctx.params.id,
-      ctx.request.body
-    )
+    const newTopic = await TopicSchema.findByIdAndUpdate(ctx.params.id, ctx.request.body)
     ctx.body = newTopic
   }
 
@@ -63,6 +59,14 @@ class TopicCtl implements TopicTypes {
   public async listTopicFollower(ctx: Context) {
     const user = await UsersSchema.find({ followingTopics: ctx.params.id })
     ctx.body = user
+  }
+
+  /**
+   * listQuestions
+   */
+  public async listQuestions(ctx: Context) {
+    const questions = await Questions.find({ topics: ctx.params.id })
+    ctx.body = questions
   }
 }
 

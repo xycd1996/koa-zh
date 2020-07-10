@@ -15,7 +15,7 @@ Mongoose.connect(
   {
     useNewUrlParser: true,
     useUnifiedTopology: true,
-    useFindAndModify: false
+    useFindAndModify: false,
   },
   () => {
     console.log('Mongoose 连接成功')
@@ -38,7 +38,7 @@ app.use(koaStatic(path.join(__dirname, '/public')))
 app.use(koaParameter(app))
 app.use(
   error({
-    preFormat: formatError
+    preFormat: formatError,
   })
 )
 app.use(
@@ -46,8 +46,8 @@ app.use(
     multipart: true,
     formidable: {
       uploadDir: path.join(__dirname, '/public/uploads'),
-      keepExtensions: true
-    }
+      keepExtensions: true,
+    },
   })
 )
 routing(app)

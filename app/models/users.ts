@@ -11,26 +11,26 @@ const UsersSchema = new Schema({
       {
         company: {
           type: Schema.Types.ObjectId,
-          ref: 'Topic'
+          ref: 'Topic',
         },
         job: {
           type: Schema.Types.ObjectId,
-          ref: 'Topic'
-        }
-      }
+          ref: 'Topic',
+        },
+      },
     ],
-    select: false
+    select: false,
   },
   gender: {
     type: String,
     enum: ['man', 'woman'],
     default: 'man',
-    required: true
+    required: true,
   },
   headline: { type: String, select: false },
   locations: {
     type: [{ type: Schema.Types.ObjectId, ref: 'Topic' }],
-    select: false
+    select: false,
   },
   educations: {
     type: [
@@ -39,20 +39,20 @@ const UsersSchema = new Schema({
         major: { type: Schema.Types.ObjectId, ref: 'Topic' },
         diploma: { type: Number, enum: [1, 2, 3, 4, 5] },
         entrance_year: Number,
-        graduation_year: Number
-      }
+        graduation_year: Number,
+      },
     ],
-    select: false
+    select: false,
   },
   // following为 _id类型，关联 User 模型数据
   following: {
     type: [{ type: Schema.Types.ObjectId, ref: 'User' }],
-    select: false
+    select: false,
   },
   followingTopics: {
     type: [{ type: Schema.Types.ObjectId, ref: 'Topic' }],
-    select: false
-  }
+    select: false,
+  },
 })
 
 export default model('User', UsersSchema)
