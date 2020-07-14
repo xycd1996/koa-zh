@@ -14,11 +14,7 @@ router.post('/', auth, TopicCtl.create)
 
 router.patch('/:id', auth, TopicCtl.update)
 
-router.get(
-  '/:id/followers',
-  TopicCtl.checkTopicsExist,
-  TopicCtl.listTopicFollower
-)
+router.get('/:id/followers', TopicCtl.checkTopicsExist, TopicCtl.listTopicFollower)
 
 router.get('/:id/questions', TopicCtl.checkTopicsExist, TopicCtl.listQuestions)
 

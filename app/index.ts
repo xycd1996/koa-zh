@@ -26,7 +26,6 @@ Mongoose.connection.on('error', console.error)
 
 function formatError(err: Error): Error {
   const { stack, ...other } = err
-  console.log(other)
   if (process.env.NODE_ENV === 'production') {
     return other
   }

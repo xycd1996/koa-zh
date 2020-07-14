@@ -2,12 +2,15 @@ import mongoose from 'mongoose'
 
 const { model, Schema } = mongoose
 
-const TopicSchema = new Schema({
-  __v: { type: Number, select: false },
-  name: { type: String, required: true },
-  avatar_url: { type: String },
-  introduction: { type: String, select: false }
-})
+const TopicSchema = new Schema(
+  {
+    __v: { type: Number, select: false },
+    name: { type: String, required: true },
+    avatar_url: { type: String },
+    introduction: { type: String, select: false },
+  },
+  { timestamps: true }
+)
 
 export default model('Topic', TopicSchema)
 

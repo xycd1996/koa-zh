@@ -1,5 +1,5 @@
 import Question from '../models/questions'
-import QuestionTypes from '../types/question'
+import QuestionTypes from 'question'
 import { Context } from 'koa'
 
 class QuestionsCtl implements QuestionTypes {
@@ -17,32 +17,30 @@ class QuestionsCtl implements QuestionTypes {
     const { fields = '' } = ctx.query
     const selected = (fields as string)
       .split(';')
-      .filter(f => f)
-      .map(f => '+' + f)
+      .filter((f) => f)
+      .map((f) => '+' + f)
       .join(' ')
     const populate = (fields as string)
       .split(';')
-      .filter(f => {
+      .filter((f) => {
         if (f === 'description') {
           return
         }
         return f
       })
       .join(' ')
-    const question = await Question.findById(ctx.params.id)
-      .select(selected)
-      .populate(populate)
+    const question = await Question.findById(ctx.params.id).select(selected).populate(populate)
     ctx.body = question
   }
 
   public async create(ctx: Context) {
     ctx.verifyParams({
       title: { type: 'string', required: true },
-      description: { type: 'string', required: false }
+      description: { type: 'string', required: false },
     })
     const question = await new Question({
       ...ctx.request.body,
-      questioner: ctx.state.user._id
+      questioner: ctx.state.user._id,
     }).save()
     ctx.body = question
   }
@@ -50,7 +48,7 @@ class QuestionsCtl implements QuestionTypes {
   public async update(ctx: Context) {
     ctx.verifyParams({
       title: { type: 'string', required: false },
-      description: { type: 'string', required: false }
+      description: { type: 'string', required: false },
     })
     await ctx.state.question.update(ctx.request.body)
     ctx.body = ctx.state.question
@@ -62,16 +60,11 @@ class QuestionsCtl implements QuestionTypes {
   }
 
   public async checkQuestionExist(ctx: Context, next: Function) {
-    const question = await Question.findById(ctx.params.id).select(
-      '+description +questioner'
-    )
+    const question = await Question.findById(ctx.params.id).select('+description +questioner')
     if (!question) {
       ctx.throw(404, '该问题不存在')
     }
-    if (
-      ctx.state.user &&
-      ctx.state.user._id !== (question as any).questioner.toString()
-    ) {
+    if (ctx.state.user && ctx.state.user._id !== (question as any).questioner.toString()) {
       ctx.throw(403, '无权限操作')
     }
     ctx.state.question = question
