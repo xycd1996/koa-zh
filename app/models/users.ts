@@ -4,7 +4,7 @@ const UsersSchema = new Schema(
   {
     __v: { type: Number, select: false },
     name: { type: String, required: true },
-    password: { type: String, required: true, select: true },
+    password: { type: String, required: true, select: false },
     avatar_url: { type: String },
     business: { type: Schema.Types.ObjectId, ref: 'Topic', select: false },
     employments: {

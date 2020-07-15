@@ -1,7 +1,7 @@
 module.exports = {
   apps: [
     {
-      interpreter: 'ts-node',
+      interpreter: './node_modules/.bin/ts-node',
       interpreter_args: '-P tsconfig.json',
       cwd: './',
       name: 'zhi-hu',
