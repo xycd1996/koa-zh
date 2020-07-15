@@ -11,6 +11,7 @@ module.exports = {
       },
       env_production: {
         NODE_ENV: 'production',
+        PRO_IP: 'http://47.99.209.230',
       },
       ignore_watch: ['node_modules'],
       watch: false,
