@@ -7,9 +7,8 @@ class HomeCtl implements HomeTypes {
     if (!ctx.request.files) {
       ctx.throw(412, '文件上传不能为空')
     }
-    const filePath: string = `${ctx.origin}/uploads/${path.basename(
-      ctx.request.files!.file.path
-    )}`
+    console.log(ctx.origin)
+    const filePath: string = `${ctx.origin}/uploads/${path.basename(ctx.request.files!.file.path)}`
     ctx.body = { filePath }
   }
 }
