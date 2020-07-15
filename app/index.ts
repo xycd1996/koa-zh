@@ -24,6 +24,8 @@ Mongoose.connect(
 
 Mongoose.connection.on('error', console.error)
 
+console.log('环境变量NODE_ENV：' + process.env.NODE_ENV)
+
 function formatError(err: Error): Error {
   const { stack, ...other } = err
   if (process.env.NODE_ENV === 'production') {

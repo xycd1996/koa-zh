@@ -67,7 +67,12 @@ const UsersSchema = new Schema(
       select: false,
     },
   },
-  { timestamps: true }
+  {
+    timestamps: {
+      createdAt: 'createTime',
+      updatedAt: 'updateTime',
+    },
+  }
 )
 
 export default model('User', UsersSchema)
